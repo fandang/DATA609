@@ -1,0 +1,40 @@
+---
+title: "DATA609_HW_WK14"
+author: "Dan Fanelli"
+output: pdf_document
+---
+
+# Question:
+
+A company is assembling a team to carry out a series of operations. There are four members of the team: A, B, C and D, and four operations to be carried out. Each team member can carry out exactly one operation. All four operations must be carried out successfully for the overall project to succeed, however the probability of a particular team member succeeding in a particular operation varies, as shown in the table below. For example, if the team members were assigned to operations in the order ABCD, then the overall probability of successful completion of the project is (0.9)(0.6)(0.85)(0.7) = 0.3213. If there is any possible way that the team can be arranged such that the overall probability of success exceeds 45%, then the manager will approve the project. Will the manager approve the project? If yes, what is the arrangement of the team that gives the highest probability of success?
+
+```{r}
+
+a <- c(0.9, 0.8, 0.9, 0.85)
+b <- c(0.7, 0.6, 0.8, 0.7)
+c <- c(0.85, 0.7, 0.85, 0.8)
+d <- c(0.75, 0.7, 0.75, 0.7)
+
+dat <- rbind(a,b,c,d)
+colnames(dat) <- c(1,2,3,4)
+
+dat
+
+over_45_pct <- c()
+
+row_names <- rownames(dat)
+permutations <- combinat::permn(row_names)
+for(p in permutations){
+  success_rate <- dat[p[1],1] * dat[p[2],2] * dat[p[3],3] * dat[p[4],4]
+  summary_of_success <- cat(p," => ", success_rate, "= (",dat[p[1],1],"*",dat[p[2],2],"*",dat[p[3],3],"*",dat[p[4],4],")")
+  print(summary_of_success)
+  if(success_rate >= 0.45){
+    over_45_pct <- c(over_45_pct, summary_of_success)
+  }
+}  
+
+print("over_45_pct:")
+print(over_45_pct)
+```
+
+# Answer: The manager will NOT approve of the project!

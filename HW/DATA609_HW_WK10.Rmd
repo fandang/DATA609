@@ -1,0 +1,77 @@
+---
+title: "DATA 609 HW Week 10"
+author: "Dan Fanelli"
+date: "11/1/2016"
+output: pdf_document
+---
+
+### Page 469 #3
+
+a) By simply looking at this plot, it seems that the M value would occur at about 1860 (when population M is about 1750)
+
+b) Try logistic curve:
+
+In this case, a logistic curve does seem reasonable:
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(gridExtra)
+
+year <- c(1814,1824,1834,1844,1854,1864)
+population <- c(125,275,830,1200,1750,1650)
+log_vals <- log(population / (1750 - population))
+df_1 <- data.frame(cbind(year,population,log_vals))
+plot1 <- ggplot(df_1) + geom_smooth(aes(x=year, y=population)) + ggtitle("year and population")
+
+
+rm_slope <- (log_vals[6]-log_vals[1]) / (year[6]-year[1])
+plot2 <- ggplot(df_1) + geom_smooth(aes(x=year, y=log_vals)) + ggtitle("year and log(population)")
+
+yr_for_line <- cbind(c(year[1],year[6]))
+logs_for_line <- c(log_vals[1],log_vals[6])
+df_1b <- data.frame(yr_for_line,logs_for_line)
+plot3 <- ggplot(df_1b) + geom_line(aes(x=yr_for_line, y=logs_for_line)) + ggtitle("simple line estimate")
+
+grid.arrange(plot1, plot2, plot3, ncol=3)
+```
+
+### Page 478: #6
+
+Other phenomena (other than drug dosage) in which the model described in the text might be used:
+
+(ie - find amount and interval, given assimilation rate decay rate)
+
+* Consider a large lake with rivers flowing into and out of it, with corresponding rates of pollution and rates of cleansing.
+* Consider immigration and emigration into and out of a country (per nationality or ethnicity), given the birth rates and death rates of those corresponding nationalities or ethnicities.
+* Consider the body's PH level given input out output of Acidic and Alkaline foods
+
+### Page 481: #1
+
+a) Using the estimate that db = 0.054 * v^2, show that 11.29's constant k = 19.9
+
+```{r, echo=FALSE}
+db_estimate <- function(v){
+  return (0.054 * v * v)
+}
+
+eleven_29_formula <- function(v,k){
+  return ((((-1)*(v * v))/(2*k))+((v * v)/k))
+  #return ((v*v)/(2*k))
+}
+
+input <- c(1:20)
+db_estimate(input)
+eleven_29_formula(input,19.9)
+db_estimate(input) / eleven_29_formula(input,19.9)
+
+# table from 4.4
+years <- c(1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990)
+base_year_x <- c(0:10)
+blue_crabs_y <- c(0.1,0.85,1.33,2.5,3.0,3.7,4.4,4.66,4.8,4.42,5)
+blue_crabs_y <- blue_crabs_y * 1000000
+
+plot(db_estimate(input),((input * input) / 2))
+
+((input * input) / 2) / db_estimate(input)
+```
+

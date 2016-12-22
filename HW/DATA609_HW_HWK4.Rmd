@@ -1,0 +1,123 @@
+---
+title: "DATA 604 HW 4"
+author: "Dan Fanelli"
+date: "September 24, 2016"
+output: html_document
+---
+
+HW 4
+
+```{r}
+options(scipen=10)
+debug <- TRUE
+middle_squared <- function(seed, num_iterations){
+
+  if(debug){
+    print(cat('middle_squared(',seed,',',num_iterations,')'))
+  }
+  x <- seed
+  (y <- as.character(x**2))
+  while(nchar(y) < 10){
+    y <- paste0("0", y)
+  }
+  answer <- as.numeric(substring(y,6,15))
+  if(num_iterations == 0){
+    return (answer)
+  }else{
+    return (middle_squared(answer, num_iterations-1))
+  }
+}
+```
+
+a)
+
+```{r}
+middle_squared(1009,10)
+```
+
+b)
+
+```{r}
+middle_squared(653217,20)
+```
+
+c)
+
+```{r}
+middle_squared(3043,15)
+```
+
+# MONTE CARLO - P201 #4
+
+```{r}
+horses <- c('Eulers Folly','Leapin Leibniz','Newton Lobell','Count Cauchy','Pumped up Poisson','Loping LHopital','Steamin Stokes','Dancin Dantzig')
+odds_one_in <- c(1/8,1/6,1/10,1/13,1/5,1/36,1/16,1/5)
+odds_one_in <- 1000 * c(1/8,1/6,1/10,1/13,1/5,1/36,1/16,1/5)
+horse_wins <- c(0,0,0,0,0,0,0,0)
+total <- sum(odds_one_in)
+num_races <- 1000
+for(i in c(0:num_races)){
+  rand_num <- runif(1, 1, total)
+  increment <- 0
+  keep_going <- TRUE
+  for(index in c(1:8)){
+    if(keep_going){
+      increment <- increment + odds_one_in[index]
+      if(rand_num < increment){
+        horse_wins[index] <- horse_wins[index]+1
+        keep_going <- FALSE
+      }
+    }
+  }
+}
+
+horse_wins
+horse_wins/odds_one_in
+
+max_index <- which.max(horse_wins)
+horses[max_index]
+
+min_index <- which.min(horse_wins)
+horses[min_index]
+```
+
+# LAG TIMES SUBMODEL - P211 #3
+
+```{r}
+lag_times <- c(2,3,4,5,6,7)
+lag_time_sim_counts <- c(0,0,0,0,0,0)
+lag_time_occurrences <- c(10,25,30,20,13,2)
+lag_time_levels <- c(10,35,65,85,98,100)
+sum_occurrences <- sum(lag_time_occurrences)
+gen_vals <- runif(1000, 1, 100)
+for(i in gen_vals){
+  next_val <- gen_vals[i]
+  keep_going <- TRUE
+  for(index in c(1:6)){
+    if(keep_going && (next_val < lag_time_levels[index])){
+      lag_time_sim_counts[index] <- lag_time_sim_counts[index] + 1
+      keep_going <- FALSE
+    }
+  }  
+}
+
+lag_time_sim_counts
+lag_time_occurrences
+
+lag_time_sim_counts / lag_time_occurrences
+```
+
+# P221 #2 - Smooth Polynomial Fitted
+
+```{r}
+lowers <- c(15,25,35,45,55,65,75,85,95,105,115,125,135)
+uppers <- c(24,34,44,54,64,74,84,94,104,114,124,134,145)
+probs <- c(0.009,0.029,0.035,0.051,0.090,0.161,0.200,0.172,0.125,0.071,0.037,0.017,0.003)
+midpoints <- (uppers + lowers)/2
+cumulatives <- probs
+for(i in 2:13){
+  cumulatives[i] <- cumulatives[i] + cumulatives[i-1]
+}
+cumulatives
+plot(midpoints,cumulatives)
+```
